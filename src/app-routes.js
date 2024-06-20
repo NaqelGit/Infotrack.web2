@@ -1,6 +1,7 @@
-import { HomePage, TasksPage, ProfilePage,TaskDetail , RegionPage } from './pages';
+import { HomePage, TasksPage, ProfilePage, TaskDetail, RegionPage } from './pages';
 
 import { withNavigationWatcher } from './contexts/navigation';
+import Roles from './pages/auth/roles';
 
 const routes = [
     {
@@ -14,16 +15,17 @@ const routes = [
     {
         path: '/home',
         element: HomePage
-    }, 
-//   {
-//     path: '/region',
-//     element: RegionPage
-//   }, 
-  {
-    path: '/region',
-    element: RegionPage
-  }
+    },
+    //   {
+    //     path: '/region',
+    //     element: RegionPage
+    //   }, 
+    {
+        path: '/region',
+        element: RegionPage
+    },
    
+
 ];
 
 export default routes.map(route => {

@@ -3,6 +3,7 @@ import appInfo from './app-info';
 import routes from './app-routes';
 import { SideNavOuterToolbar as SideNavBarLayout } from './layouts';
 import { Footer } from './components';
+import AuthRouteBuilder from './pages/auth/auth-routes'
 
 export default function Content() {
   return (
@@ -15,6 +16,11 @@ export default function Content() {
             element={element}
           />
         ))}
+
+        {/* routes of auth module */}
+        {AuthRouteBuilder()}
+        
+
         <Route
           path='*'
           element={<Navigate to='/home' />}

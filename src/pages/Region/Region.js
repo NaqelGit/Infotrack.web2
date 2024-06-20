@@ -1,15 +1,15 @@
-import React,{useCallback, useRef ,useMemo,useState } from 'react';
+import React, { useCallback, useRef, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Drawer, ButtonToolbar, Placeholder } from 'rsuite';
-import Box, { Item as BoxItem} from 'devextreme-react/box';
-import  {TextBox,Button } from 'devextreme-react';
+import Box, { Item as BoxItem } from 'devextreme-react/box';
+import { TextBox, Button } from 'devextreme-react';
 import 'devextreme/data/odata/store';
 import notify from 'devextreme/ui/notify';
 import DropDownButton from 'devextreme-react/drop-down-button';
 import DateBox from 'devextreme-react/date-box';
 
 import './Region.scss';
-  
+
 import DataGrid, {
   Column,
   Pager,
@@ -24,44 +24,43 @@ import DataGrid, {
   SearchPanel,
   Button as CommandButton
 } from 'devextreme-react/data-grid';
- 
+
 import { jsPDF } from 'jspdf';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver-es';
 
 import { exportDataGrid } from 'devextreme/excel_exporter';
 import { exportDataGrid as exportPDF } from 'devextreme/pdf_exporter';
-import {createStore} from 'devextreme-aspnet-data-nojquery';
+import { createStore } from 'devextreme-aspnet-data-nojquery';
 import Profile from '../profile/profile';
 
 
-const exportFormats = ['Pdf','Excel'];
+const exportFormats = ['Pdf', 'Excel'];
 
 const onExporting = (e) => {
 
-  if(e.format === 'Excel')
-  {
-        const workbook = new Workbook();
-        const worksheet = workbook.addWorksheet('Main sheet');
-        exportDataGrid({
-          component: e.component,
-          worksheet,
-          autoFilterEnabled: true,
-        }).then(() => {
-          workbook.xlsx.writeBuffer().then((buffer) => {
-            saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DataGrid.xlsx');
-          });
-        });
+  if (e.format === 'Excel') {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet('Main sheet');
+    exportDataGrid({
+      component: e.component,
+      worksheet,
+      autoFilterEnabled: true,
+    }).then(() => {
+      workbook.xlsx.writeBuffer().then((buffer) => {
+        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DataGrid.xlsx');
+      });
+    });
   }
-  else if(e.format === 'Pdf'){
-        const doc = new jsPDF();
-        exportPDF({
-          jsPDFDocument: doc,
-          component: e.component,
-          indent: 5,
-        }).then(() => {
-          doc.save('Companies.pdf');
-        });
+  else if (e.format === 'Pdf') {
+    const doc = new jsPDF();
+    exportPDF({
+      jsPDFDocument: doc,
+      component: e.component,
+      indent: 5,
+    }).then(() => {
+      doc.save('Companies.pdf');
+    });
   }
 };
 
@@ -83,11 +82,11 @@ const profileSettings = [
 
 //const url='https://localhost:44397';
 
-const dataSource=createStore({
+const dataSource = createStore({
   //key:'Id',
   loadUrl: 'https://localhost:44397/Region/Regions',
-  onBeforeSend:(method,ajaxOptions)=>{
-    ajaxOptions.xhrFields={withCredentials: false};
+  onBeforeSend: (method, ajaxOptions) => {
+    ajaxOptions.xhrFields = { withCredentials: false };
   },
 });
 
@@ -96,6 +95,7 @@ export default function Task(props) {
   const [openWithHeader, setOpenWithHeader] = React.useState(false);
   const [selectedRowData, setSelectedRowData] = useState('');
   const [focusedRowKey, setFocusedRowKey] = useState(-1);
+  
 
   const now = new Date();
   const dataGridRef = useRef(null);
@@ -105,8 +105,8 @@ export default function Task(props) {
     dataGridRef.current.instance.refresh();
   }, []);
 
-  const [selectedRowIndex, setSelectedRowIndex] = useState(-1);  
-  
+  const [selectedRowIndex, setSelectedRowIndex] = useState(-1);
+
 
   const onSelectionChanged = useCallback(({ selectedRowsData }) => {
     const data = selectedRowsData[0];
@@ -117,18 +117,18 @@ export default function Task(props) {
     setSelectedRowData(data);
     setFocusedRowKey(e.component.option('focusedRowKey'));
   }, []);
- 
 
-const addButtonOptions = {
-  icon:"plus",
-  text:"Add",
-  stylingMode:"solid",
-  type:"default",
-  onClick: (e) => {
-    OpenDetailScreen(e);
-    notify('Add button has been clicked!');
-  },
-};
+
+  const addButtonOptions = {
+    icon: "plus",
+    text: "Add",
+    stylingMode: "solid",
+    type: "default",
+    onClick: (e) => {
+      OpenDetailScreen(e);
+      notify('Add button has been clicked!');
+    },
+  };
 
 
 
@@ -140,33 +140,33 @@ const addButtonOptions = {
   const onItemClick = useCallback((e) => {
     OpenDetailScreen(e);
   }, []);
-  
 
-const OpenDetailScreen = useCallback((e) => {
+
+  const OpenDetailScreen = useCallback((e) => {
 
 
     setOpenWithHeader(true)
-},[]);
+  }, []);
 
- 
- 
+
+
 
   return (
-    
+
     <React.Fragment>
-        
+
       <Drawer size={'45rem'} open={openWithHeader} onClose={() => setOpenWithHeader(false)}>
-       
+
         <Drawer.Body>
-          <Profile selectedRowData={selectedRowData} currentGridRef={dataGridRef} func={setOpenWithHeader}/>
+          <Profile selectedRowData={selectedRowData} currentGridRef={dataGridRef} func={setOpenWithHeader} />
         </Drawer.Body>
       </Drawer>
-   
+
       <DataGrid
         ref={dataGridRef}
         keyExpr="Id"
         className={'wide-card'}
-        style={{ "margin-right":"0.20em"}}
+        style={{ "margin-right": "0.20em" }}
         dataSource={dataSource}
         remoteOperations={true}
         showBorders={false}
@@ -178,86 +178,82 @@ const OpenDetailScreen = useCallback((e) => {
         onSelectionChanged={onSelectionChanged}
         onFocusedRowChanged={onFocusedRowChanged}
       >
-        <ColumnChooser enabled={false}/>
+        <ColumnChooser enabled={false} />
         <Selection mode="multiple" />
         <Export enabled={true} formats={exportFormats} allowExportSelectedData={true} />
         <SearchPanel
-        visible={true}
-        highlightCaseSensitive={true}
-      />
+          visible={true}
+          highlightCaseSensitive={true}
+        />
         <Toolbar>
-        <Item locateInMenu='auto' location="before">
-      
-        
-          <h2 style={{marginLeft:20+'px',}} >
-            <i class="dx-icon-email" style={{fontSize: 28+'px'}}></i>
-            Regions
-            <Button 
-            type="primary"
-            stylingMode="text"
-            style={{marginLeft:10+'px'}} icon="refresh"
+          <Item locateInMenu='auto' location="before">
 
-                            onClick={refreshDataGrid}
-            />
-          </h2>
-        
-         
-        </Item>
-        <Item locateInMenu='auto' location="before">
-            <Box  direction='row' height={40}>
-                  <BoxItem   ratio={1}>
-                    
-                  <Button icon='plus'
-                            
-                            width={100}
-                            type="default"
-                            stylingMode="contained"
-                            text='Add' onClick={OpenDetailScreen}></Button>
-                        
-                          
-                          
-                        
-                      
-                  </BoxItem>
-                  
+
+            <h2 style={{ marginLeft: 20 + 'px', }} >
+              <i class="dx-icon-email" style={{ fontSize: 28 + 'px' }}></i>
+              Regions
+              <Button
+                type="primary"
+                stylingMode="text"
+                style={{ marginLeft: 10 + 'px' }} icon="refresh"
+
+                onClick={refreshDataGrid}
+              />
+            </h2>
+
+
+          </Item>
+          <Item locateInMenu='auto' location="before">
+            <Box direction='row' height={40}>
+              <BoxItem ratio={1}>
+
+                <Button icon='plus'
+
+                  width={100}
+                  type="default"
+                  stylingMode="contained"
+                  text='Add' onClick={OpenDetailScreen}></Button>
+
+              </BoxItem>
+
             </Box>
 
-            
-        </Item>
-        <Item locateInMenu='auto' location='before'>
 
-          <Box  direction="row" height={40}>
-                <BoxItem   ratio={1}>
-                      <DropDownButton
-                      splitButton={false}
-                      useSelectMode={false}
-                      type='success'
-                      text="Dispatch Actions"
-                      icon="preferences"
-                      items={profileSettings}
-                      displayExpr="name"
-                      keyExpr="id"
-                      onButtonClick={onButtonClick}
-                      onItemClick={onItemClick}
-                    />
-                </BoxItem>
-          </Box>
-          
-        </Item>
-        
- 
-        <Item name="searchPanel"
-        locateInMenu='auto'
-        location='after'/>
-        <Item name="exportButton"
-        locateInMenu='auto'
-        location='after'
-         />
-      </Toolbar>
-         
-         
-       
-        
+          </Item>
+          <Item locateInMenu='auto' location='before'>
+
+            <Box direction="row" height={40}>
+              <BoxItem ratio={1}>
+                <DropDownButton
+                  splitButton={false}
+                  useSelectMode={false}
+                  type='success'
+                  text="Dispatch Actions"
+                  icon="preferences"
+                  items={profileSettings}
+                  displayExpr="name"
+                  keyExpr="id"
+                  onButtonClick={onButtonClick}
+                  onItemClick={onItemClick}
+                />
+              </BoxItem>
+            </Box>
+
+          </Item>
+
+
+          <Item name="searchPanel"
+            locateInMenu='auto'
+            location='after' />
+          <Item name="exportButton"
+            locateInMenu='auto'
+            location='after'
+          />
+        </Toolbar>
+
+
+
+
 
         <Paging defaultPageSize={8} />
         <Pager showPageSizeSelector={true} showInfo={true} />
@@ -270,7 +266,7 @@ const OpenDetailScreen = useCallback((e) => {
           caption={'Name English'}
           hidingPriority={8}
         />
-        <Column 
+        <Column
           dataField={'Name_ar'}
           caption={'Name Arabic'}
           hidingPriority={6}
@@ -281,32 +277,33 @@ const OpenDetailScreen = useCallback((e) => {
           hidingPriority={5}
         >
         </Column>
-        
-       
-         <Column type="buttons">
-                    <CommandButton
-                        text="My Command"
-                        icon="edit"
-                        hint="My Command"
-                        onClick={OpenDetailScreen}
-                    />
-                </Column>
-                 <Column type="buttons">
-                    <CommandButton
-                        text="My Command"
-                        icon="trash"
-                        hint="My Command"
-                        onClick={OpenDetailScreen}
-                    />
-                </Column>
+
+
+        <Column type="buttons">
+          <CommandButton
+            text="My Command"
+            icon="edit"
+            hint="My Command"
+            onClick={OpenDetailScreen}
+          />
+        </Column>
+        <Column type="buttons">
+          <CommandButton
+            text="My Command"
+            icon="trash"
+            hint="My Command"
+            onClick={OpenDetailScreen}
+          />
+        </Column>
       </DataGrid>
-      
-      
-    
+
+
+
     </React.Fragment>
-)}
- 
- 
+  )
+}
+
+
 const priorities = [
   { name: 'High', value: 4 },
   { name: 'Urgent', value: 3 },
